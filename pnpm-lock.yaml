@@ -50,7 +50,7 @@ importers:
       esno: ^0.16.3
       events: ^3.3.0
       fast-glob: ^3.2.12
-      fs-extra: ^10.1.0
+      fs-extra: ^11.1.0
       giget: ^0.1.7
       jiti: ^1.16.0
       js-base64: ^3.7.2
@@ -114,7 +114,7 @@ importers:
       esno: 0.16.3
       events: 3.3.0
       fast-glob: 3.2.12
-      fs-extra: 10.1.0
+      fs-extra: 11.1.0
       giget: 0.1.7
       jiti: 1.16.0
       js-base64: 3.7.2
@@ -4137,6 +4137,15 @@ packages:
       graceful-fs: 4.2.10
       jsonfile: 6.1.0
       universalify: 2.0.0
+
+  /fs-extra/11.1.0:
+    resolution: {integrity: sha512-0rcTq621PD5jM/e0a3EJoGC/1TC5ZBCERW82LQuwfGnCa1V8w7dpYH1yNu+SLb6E5dkeCBzKEyLGlFrnr+dUyw==}
+    engines: {node: '>=14.14'}
+    dependencies:
+      graceful-fs: 4.2.10
+      jsonfile: 6.1.0
+      universalify: 2.0.0
+    dev: false
 
   /fs-extra/9.1.0:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
