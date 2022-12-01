@@ -1,0 +1,63 @@
+{
+  "name": "artisan-init",
+  "type": "module",
+  "version": "0.34.0",
+  "packageManager": "pnpm@7.14.1",
+  "description": "Artisan core.",
+  "author": "Chris Breuer",
+  "license": "MIT",
+  "homepage": "https://github.com/stacksjs/stacks/tree/main/.stacks/artisan#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stacksjs/stacks.git",
+    "directory": ".stacks/artisan"
+  },
+  "bugs": {
+    "url": "https://github.com/stacksjs/stacks/issues"
+  },
+  "keywords": [
+    "artisan",
+    "init",
+    "cli",
+    "starter-kit",
+    "stacks",
+    "typescript"
+  ],
+  "sideEffects": false,
+  "bin": {
+    "artisan-init": "./cli.mjs",
+    "artisan": "./cli.mjs",
+    "art": "./cli.mjs",
+    "stacks": "./cli.mjs",
+    "stx": "./cli.mjs"
+  },
+  "contributors": [
+    "Chris Breuer <chris@ow3.org>"
+  ],
+  "files": [
+    "dist",
+    "*.mjs"
+  ],
+  "engines": {
+    "node": ">=v18.12.0",
+    "pnpm": ">=7.14.1"
+  },
+  "scripts": {
+    "artisan": "pnpm run dev && node cli.mjs",
+    "artisan-init": "pnpm run build && node cli.mjs",
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "prepublishOnly": "pnpm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@jsdevtools/ez-spawn": "^3.0.4",
+    "cac": "^6.7.14",
+    "giget": "^0.1.7",
+    "kolorist": "^1.6.0",
+    "pathe": "^0.3.9"
+  },
+  "devDependencies": {
+    "unbuild": "^0.9.4"
+  }
+}
