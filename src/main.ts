@@ -1,13 +1,15 @@
-import { createApp } from 'vue';
+import 'highlight.js/styles/atom-one-light.css'
 
-import App from './app.vue';
-const app = createApp(App);
+import hljsVuePlugin from '@highlightjs/vue-plugin'
+
+import { createApp } from 'vue'
+
+import App from './app.vue'
 
 import '@unocss/reset/tailwind.css'
-import './plugins/unocss.ts'
 
+// import { unifiedApp } from './plugins/unified/unified-app'
+const app = createApp(App)
+app.use(hljsVuePlugin)
 
-import { unifiedApp } from './plugins/unified/unified-app';
-app.use(unifiedApp);
-
-app.mount('#app');
+app.mount('#app')

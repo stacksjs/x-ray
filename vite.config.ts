@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 import Unocss from '@unocss/vite'
 
 export default defineConfig({
@@ -19,6 +19,6 @@ export default defineConfig({
     Unocss({
       configFile: 'unocss.config.ts',
       mode: 'vue-scoped',
-    })
+    }),
   ],
-});
+})
