@@ -1,66 +1,55 @@
 <script lang="ts" setup>
-import { isNumber } from '@antfu/utils'
+import { ref } from 'vue'
 import type { Log } from './functions/types'
 
-const sampleLogs: Log[] = [
-  {
-    content: 'hello world',
-    type: 'string',
-    file: 'TestController.php',
-    expanded: false,
-    color: 'indigo',
-    time: '09:20:35',
-  },
-  {
-    content: [1, 2, 3],
-    type: 'array',
-    file: 'Model.php',
-    expanded: false,
-    color: 'green',
-    time: '10:15:20',
-  },
+const logs = ref([])
 
-  {
-    content: [{ name: 'John', age: 20 }],
-    type: 'array',
-    file: 'Model.php',
-    expanded: false,
-    color: 'gray',
-    time: '10:19:13',
-  },
+const allLogs = ref([])
 
-  {
-    content: 69420,
-    type: 'integer',
-    file: 'TestEvent.php',
-    expanded: false,
-    color: 'blue',
-    time: '10:21:38',
-  },
+async function getData(url = '', data = {}) {
+  // Default options are marked with *
+  const response = await fetch(url, {
+    method: 'GET', // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+  })
 
-  {
-    content: 'select * from `users` where email = \'gtorregosa@gmail.com\'',
-    type: 'code',
-    file: 'TestEvent.php',
-    expanded: false,
-    color: 'red',
-    time: '10:33:15',
-  },
-]
-
-function isArray(log: Log) {
-  return log.type === 'array' || log.type === 'object'
+  return response.json() // parses JSON response into native JavaScript objects
 }
 
-function stringifyContent(obj: object) {
+getData('http://localhost:3000/api/logs')
+  .then((data) => {
+    logs.value = data
+    allLogs.value = data
+  })
+
+const logColors: string[] = []
+
+function isArray(log: Log): Boolean {
+  return typeof log.content === 'object' && log.content !== null
+}
+
+function stringifyContent(obj: object): string {
   return JSON.stringify(obj, null, 2)
 }
 
-function isCode(log: Log) {
-  return log.type === 'code'
+function isCode(content: any): Boolean {
+  if (typeof content === 'string') {
+    const format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
+
+    return format.test(content)
+  }
+
+  return false
 }
 
-function getCircleColor(color: string) {
+function getCircleColor(color: string): string {
   if (color === 'green')
     return 'text-green-400'
 
@@ -82,7 +71,7 @@ function getCircleColor(color: string) {
   return 'text-gray-400'
 }
 
-function getBadgeBg(color: string) {
+function getBadgeBg(color: string): string {
   if (color === 'green')
     return 'bg-green-100'
 
@@ -103,7 +92,7 @@ function getBadgeBg(color: string) {
 
   return 'bg-gray-100'
 }
-function getBadgeColor(color: string) {
+function getBadgeColor(color: string): string {
   if (color === 'green')
     return 'text-green-700'
 
@@ -123,6 +112,26 @@ function getBadgeColor(color: string) {
     return 'text-indigo-700'
 
   return 'text-gray-700'
+}
+
+function filterTag(color: string) {
+  const oldLogs = [...logs.value]
+
+  if (!logColors.includes(color))
+    logColors.push(color)
+  else
+    logColors.splice(logColors.indexOf(color), 1)
+
+  allLogs.value = oldLogs.filter((log) => {
+    return logColors.includes(log.color)
+  })
+
+  if (!logColors.length)
+    allLogs.value = [...logs.value]
+}
+
+function colorFiltered(color: string): Boolean {
+  return logColors.includes(color)
 }
 </script>
 
@@ -208,24 +217,39 @@ function getBadgeColor(color: string) {
         </div>
 
         <div class="flex items-center space-x-6">
-          <button>
-            <div class="h-5 w-5 border-gray-600 border-1.5 rounded-full" />
+          <button @click="filterTag('gray')">
+            <div
+              class="h-5 w-5 border-gray-600  border-1.5 rounded-full"
+              :class="{ 'bg-gray-600': colorFiltered('gray') }"
+            />
           </button>
 
-          <button>
-            <div class="h-5 w-5 border-indigo-600 border-1.5 rounded-full" />
+          <button @click="filterTag('indigo')">
+            <div
+              class="h-5 w-5 border-indigo-600 border-1.5 rounded-full"
+              :class="{ 'bg-indigo-600': colorFiltered('indigo') }"
+            />
           </button>
 
-          <button>
-            <div class="h-5 w-5 border-red-600 border-1.5 rounded-full" />
+          <button @click="filterTag('red')">
+            <div
+              class="h-5 w-5 border-red-600 border-1.5 rounded-full"
+              :class="{ 'bg-red-600': colorFiltered('red') }"
+            />
           </button>
 
-          <button>
-            <div class="h-5 w-5 border-green-600 border-1.5 rounded-full" />
+          <button @click="filterTag('green')">
+            <div
+              class="h-5 w-5 border-green-600 border-1.5 rounded-full"
+              :class="{ 'bg-green-600': colorFiltered('green') }"
+            />
           </button>
 
-          <button>
-            <div class="h-5 w-5 border-blue-600 border-1.5 rounded-full" />
+          <button @click="filterTag('blue')">
+            <div
+              class="h-5 w-5 border-blue-600 border-1.5 rounded-full"
+              :class="{ 'bg-blue-600': colorFiltered('blue') }"
+            />
           </button>
         </div>
 
@@ -276,7 +300,7 @@ function getBadgeColor(color: string) {
         class="divide-y divide-gray-200"
       >
         <li
-          v-for="(log, index) in sampleLogs"
+          v-for="(log, index) in allLogs"
           :key="index"
         >
           <a
@@ -327,28 +351,25 @@ function getBadgeColor(color: string) {
                   <div class="hidden md:block">
 
                     <div
-                      v-if="(isArray(log) || isNumber(log.content) || isCode(log))"
+                      v-if="(isArray(log) || isCode(log.content))"
                     >
-                      <highlightjs
-                        v-if="isCode(log)"
-                        autodetect
-                        :code="log.content"
-                      />
+                      <pre
+                        v-if="isCode(log.content)"
+                        v-highlightjs
+                      ><code>{{ log.content }}</code></pre>
 
-                      <highlightjs
+                      <pre
                         v-else
-                        autodetect
-                        :code="stringifyContent(log.content)"
-                      />
+                        v-highlightjs
+                      ><code>{{ stringifyContent(log.content) }}</code></pre>
+
                     </div>
 
                     <div
                       v-else
                       class="text-indigo-800 font-semibold"
                     >
-
                       {{ log.content }}
-
                     </div>
 
                     <div

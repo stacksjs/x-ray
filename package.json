@@ -18,10 +18,10 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@highlightjs/vue-plugin": "^2.1.0",
     "@mdi/font": "7.0.96",
     "@tauri-apps/api": "1.0.2",
     "@unocss/reset": "^0.47.4",
+    "axios": "^1.2.1",
     "roboto-fontface": "0.10.0",
     "typescript": "^4.9.3",
     "unified-network": "0.4.0",
@@ -35,6 +35,7 @@
     "@unocss/vite": "^0.47.4",
     "@vitejs/plugin-vue": "3.0.1",
     "eslint": "^8.28.0",
+    "nitropack": "^1.0.0",
     "sass": "1.54.0",
     "unocss": "^0.47.4",
     "vite": "3.0.3"

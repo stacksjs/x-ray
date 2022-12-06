@@ -5,7 +5,7 @@ import Unocss from '@unocss/vite'
 export default defineConfig({
   clearScreen: false,
   server: {
-    port: 8080,
+    port: 4000,
     strictPort: true,
   },
   envPrefix: ['VITE_', 'TAURI_'],
