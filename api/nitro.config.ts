@@ -13,6 +13,6 @@ export default defineNitroConfig({
   },
 
   routeRules: {
-    '/api/**': { cors: true, headers: { 'access-control-allowed-methods': '*', 'access-allowed-origins': '*' } },
+    '/api/**': { cors: true, headers: { 'access-control-allowed-methods': '*', 'access-allowed-origins': '*', 'access-control-allowed-headers': 'Origin, Content-Type, X-Auth-Token' } },
   },
 })

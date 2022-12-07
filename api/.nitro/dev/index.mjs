@@ -5,7 +5,7 @@ import { join } from 'path';
 import { mkdirSync } from 'fs';
 import { parentPort, threadId } from 'worker_threads';
 import { provider, isWindows } from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/std-env/dist/index.mjs';
-import { eventHandler, setHeaders, sendRedirect, defineEventHandler, handleCacheHeaders, createEvent, getRequestHeader, createApp, createRouter as createRouter$1, lazyEventHandler, toNodeListener } from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/h3/dist/index.mjs';
+import { eventHandler, setHeaders, sendRedirect, defineEventHandler, handleCacheHeaders, createEvent, getRequestHeader, createApp, createRouter as createRouter$1, lazyEventHandler, toNodeListener, readBody } from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/h3/dist/index.mjs';
 import { createFetch as createFetch$1, Headers } from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/ofetch/dist/node.mjs';
 import destr from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/destr/dist/index.mjs';
 import { createCall, createFetch } from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/unenv/runtime/fetch/index.mjs';
@@ -19,7 +19,7 @@ import unstorage_47drivers_47redis from 'file:///Users/glenn/Documents/Projects/
 import defu from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/defu/dist/defu.mjs';
 import { toRouteMatcher, createRouter } from 'file:///Users/glenn/Documents/Projects/x-ray/node_modules/radix3/dist/index.mjs';
 
-const _runtimeConfig = {"app":{"baseURL":"/"},"nitro":{"routeRules":{"/api/**":{"cors":true,"headers":{"access-control-allow-origin":"*","access-control-allowed-methods":"*","access-control-allow-headers":"*","access-control-max-age":"0","access-allowed-origins":"*"}}}}};
+const _runtimeConfig = {"app":{"baseURL":"/"},"nitro":{"routeRules":{"/api/**":{"cors":true,"headers":{"access-control-allow-origin":"*","access-control-allowed-methods":"*","access-control-allow-headers":"*","access-control-max-age":"0","access-allowed-origins":"*","access-control-allowed-headers":"Origin, Content-Type, X-Auth-Token"}}}}};
 const ENV_PREFIX = "NITRO_";
 const ENV_PREFIX_ALT = _runtimeConfig.nitro.envPrefix ?? process.env.NITRO_ENV_PREFIX ?? "_";
 const getEnv = (key) => {
@@ -84,18 +84,18 @@ for (const asset of serverAssets) {
   assets.mount(asset.baseName, unstorage_47drivers_47fs({ base: asset.dir }));
 }
 
-const storage = createStorage({});
+const storage$2 = createStorage({});
 
-const useStorage = () => storage;
+const useStorage = () => storage$2;
 
-storage.mount('/assets', assets);
+storage$2.mount('/assets', assets);
 
-storage.mount('redis', unstorage_47drivers_47redis({"driver":"redis"}));
-storage.mount('db', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api/data/db","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api/.nitro","ignore":["**/node_modules/**","**/.git/**"]}));
-storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api/.nitro/cache","ignore":["**/node_modules/**","**/.git/**"]}));
+storage$2.mount('redis', unstorage_47drivers_47redis({"driver":"redis"}));
+storage$2.mount('db', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api/data/db","ignore":["**/node_modules/**","**/.git/**"]}));
+storage$2.mount('root', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api","ignore":["**/node_modules/**","**/.git/**"]}));
+storage$2.mount('src', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api","ignore":["**/node_modules/**","**/.git/**"]}));
+storage$2.mount('build', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api/.nitro","ignore":["**/node_modules/**","**/.git/**"]}));
+storage$2.mount('cache', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/glenn/Documents/Projects/x-ray/api/.nitro/cache","ignore":["**/node_modules/**","**/.git/**"]}));
 
 const config = useRuntimeConfig();
 const _routeRulesMatcher = toRouteMatcher(createRouter({ routes: config.nitro.routeRules }));
@@ -432,9 +432,11 @@ function renderHTMLError(error) {
 `;
 }
 
+const _lazy_bVLkOW = () => Promise.resolve().then(function () { return storeLogs$1; });
 const _lazy_mYm3Hl = () => Promise.resolve().then(function () { return logs$1; });
 
 const handlers = [
+  { route: '/api/store-logs', handler: _lazy_bVLkOW, lazy: true, middleware: false, method: undefined },
   { route: '/api/logs', handler: _lazy_mYm3Hl, lazy: true, middleware: false, method: undefined }
 ];
 
@@ -510,44 +512,29 @@ server.listen(listenAddress, () => {
   process.on("uncaughtException", (err) => console.error("[nitro] [dev] [uncaughtException]", err));
 }
 
+const storage = createStorage({});
+storage.mount("/output", unstorage_47drivers_47fs({ base: "./output" }));
+const storage$1 = storage;
+
+const storeLogs = eventHandler(async (event) => {
+  const body = await readBody(event);
+  await appendLogs(body);
+  return { status: "success" };
+});
+async function appendLogs(log) {
+  const storageLogs = await storage$1.getItem("logs") || [];
+  const newLogs = [...storageLogs, log];
+  await storage$1.setItem("logs", newLogs);
+}
+
+const storeLogs$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  'default': storeLogs
+});
+
 const logs = eventHandler(async () => {
-  return [
-    {
-      content: "hello world",
-      file: "TestController.php",
-      expanded: false,
-      color: "indigo",
-      time: "09:20:35"
-    },
-    {
-      content: [1, 2, 3],
-      file: "Model.php",
-      expanded: false,
-      color: "green",
-      time: "10:15:20"
-    },
-    {
-      content: [{ name: "John", age: 20 }, { name: "Brandon", age: 84 }],
-      file: "Model.php",
-      expanded: false,
-      color: "gray",
-      time: "10:19:13"
-    },
-    {
-      content: 69420,
-      file: "TestEvent.php",
-      expanded: false,
-      color: "blue",
-      time: "10:21:38"
-    },
-    {
-      content: "SELECT * FROM `users` \nWHERE email = 'gtorregosa@gmail.com'",
-      file: "TestEvent.php",
-      expanded: false,
-      color: "red",
-      time: "10:33:15"
-    }
-  ];
+  const storedLogs = await storage$1.getItem("logs");
+  return storedLogs || [];
 });
 
 const logs$1 = /*#__PURE__*/Object.freeze({

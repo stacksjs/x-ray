@@ -1,30 +1,15 @@
 <script lang="ts" setup>
+import type { Ref } from 'vue'
 import { ref } from 'vue'
 import type { Log } from './functions/types'
+import request from './functions/http'
+const logs: Ref<Log[]> = ref([])
 
-const logs = ref([])
+const allLogs: Ref<Log[]> = ref([])
 
-const allLogs = ref([])
-
-async function getData(url = '', data = {}) {
-  // Default options are marked with *
-  const response = await fetch(url, {
-    method: 'GET', // *GET, POST, PUT, DELETE, etc.
-    mode: 'cors', // no-cors, *cors, same-origin
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: 'same-origin', // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    redirect: 'follow', // manual, *follow, error
-    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-  })
-
-  return response.json() // parses JSON response into native JavaScript objects
-}
-
-getData('http://localhost:3000/api/logs')
+request('http://127.0.0.1:3000/api/logs', 'GET')
   .then((data) => {
+    console.log(data)
     logs.value = data
     allLogs.value = data
   })
@@ -144,7 +129,7 @@ function colorFiltered(color: string): Boolean {
             <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" -->
             <a
               href="#"
-              class="inline-flex bg-white group items-center px-3 rounded-bl-lg border rounded-tl-lg pt-1 text-sm font-medium text-gray-900"
+              class="inline-flex bg-white group items-center px-3 rounded-bl-lg border rounded-tl-lg text-sm font-medium text-gray-900"
             >
               <svg
                 class="w-5 h-5 text-gray-700 group-hover:text-gray-500 transition ease-in-out duration-150"
@@ -161,7 +146,7 @@ function colorFiltered(color: string): Boolean {
             </a>
             <a
               href="#"
-              class="inline-flex bg-white group items-center px-3 rounded-tr-lg rounded-br-lg border pt-1 text-sm font-medium text-gray-900"
+              class="inline-flex bg-white group items-center px-3 rounded-tr-lg rounded-br-lg border text-sm font-medium text-gray-900"
             >
               <svg
                 class="w-5 h-5 text-gray-700 group-hover:text-gray-500 transition ease-in-out duration-150"
@@ -178,7 +163,7 @@ function colorFiltered(color: string): Boolean {
             </a>
             <a
               href="#"
-              class="inline-flex ml-8 group bg-white items-center px-3.5 rounded-bl-lg border rounded-tl-lg  pt-1 text-sm font-medium text-gray-900"
+              class="inline-flex ml-8 group bg-white items-center px-3.5 rounded-bl-lg border rounded-tl-lg text-sm font-medium text-gray-900"
             >
               <svg
                 class="w-5 h-5 text-gray-700 group-hover:text-gray-500 transition ease-in-out duration-150"
@@ -195,7 +180,7 @@ function colorFiltered(color: string): Boolean {
             </a>
             <a
               href="#"
-              class="inline-flex bg-white group items-center px-3 rounded-tr-lg rounded-br-lg border pt-1 text-sm font-medium text-gray-900"
+              class="inline-flex bg-white group items-center px-3 rounded-tr-lg rounded-br-lg border text-sm font-medium text-gray-900"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

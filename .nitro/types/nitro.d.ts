@@ -2,8 +2,13 @@
 declare module 'nitropack' {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
-    '/api/store-logs': Awaited<ReturnType<typeof import('../../routes/api/store-logs').default>>
-    '/api/logs': Awaited<ReturnType<typeof import('../../routes/api/logs').default>>
+    '/api/storage': Awaited<ReturnType<typeof import('../../api/storage/index').default>>
+    '/api/src/types': Awaited<ReturnType<typeof import('../../api/src/types').default>>
+    '/api/routes/api/store-logs': Awaited<ReturnType<typeof import('../../api/routes/api/store-logs').default>>
+    '/api/routes/api/logs': Awaited<ReturnType<typeof import('../../api/routes/api/logs').default>>
+    '/api/nitro.config': Awaited<ReturnType<typeof import('../../api/nitro.config').default>>
+    '/api/.nitro/types/nitro.d': Awaited<ReturnType<typeof import('../../api/.nitro/types/nitro.d').default>>
+    '/api/.nitro/dev': Awaited<ReturnType<typeof import('../../api/.nitro/dev/index').default>>
   }
 }
 declare global {
